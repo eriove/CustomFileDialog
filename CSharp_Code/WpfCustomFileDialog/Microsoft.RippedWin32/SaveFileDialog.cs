@@ -11,13 +11,11 @@
 // REMAINS UNCHANGED.
 namespace WpfCustomFileDialog
 {
-    using MS.Win32;
     using System;
     using System.IO;
     using System.Security;
     using System.Security.Permissions;
     using System.Windows;
-    using System.Runtime.InteropServices;
     using System.Windows.Controls;
 
     public sealed class SaveFileDialog<T> : WpfCustomFileDialog.FileDialogExt<T> where T : ContentControl, IWindowExt, new()

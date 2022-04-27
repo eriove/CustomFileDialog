@@ -9,18 +9,13 @@
 // IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR
 // PURPOSE. IT CAN BE DISTRIBUTED FREE OF CHARGE AS LONG AS THIS HEADER 
 // REMAINS UNCHANGED.
-using MS.Win32;
+
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security;
-using System.Security.Permissions;
 using System.Text;
 using System.Windows;
-using System.Reflection;
 
 namespace WpfCustomFileDialog
 {

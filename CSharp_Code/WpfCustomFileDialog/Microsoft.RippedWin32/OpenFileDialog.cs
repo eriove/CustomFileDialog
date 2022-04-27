@@ -12,14 +12,10 @@
 namespace WpfCustomFileDialog
 {
     //using MS.Internal.PresentationFramework;
-    using MS.Win32;
     using System;
     using System.IO;
     using System.Security;
     using System.Security.Permissions;
-    using System.Runtime.InteropServices;
-    using System.Windows;
-    using System.Reflection;
     using System.Windows.Controls;
 
     public sealed class OpenFileDialog<T> : WpfCustomFileDialog.FileDialogExt<T> where T : ContentControl, IWindowExt, new()

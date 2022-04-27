@@ -9,23 +9,15 @@
 // IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR
 // PURPOSE. IT CAN BE DISTRIBUTED FREE OF CHARGE AS LONG AS THIS HEADER 
 // REMAINS UNCHANGED.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+
 using System.Windows.Controls;
 
 namespace WpfCustomFileDialog
 {
-    using MS.Win32;
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.IO;
-    using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
     using System.Security;
-    using System.Security.Permissions;
     using System.Text;
     using System.Windows;
     using System.Reflection;
@@ -559,19 +551,19 @@ namespace WpfCustomFileDialog
         }
 
         //http://stackoverflow.com/questions/974598/find-all-controls-in-wpf-window-by-type
-        public static IEnumerable<T> FindLogicalChildren<T>(DependencyObject depObj) where T : DependencyObject
+        public static IEnumerable<TChild> FindLogicalChildren<TChild>(DependencyObject depObj) where TChild : DependencyObject
         {
             if (depObj != null)
             {
                 foreach (object obj in LogicalTreeHelper.GetChildren(depObj))
                 {
                     DependencyObject child = obj as DependencyObject;
-                    if (child != null && child is T)
+                    if (child != null && child is TChild)
                     {
-                        yield return (T)child;
+                        yield return (TChild)child;
                     }
                     if (child != null)
-                        foreach (T childOfChild in FindLogicalChildren<T>(child))
+                        foreach (TChild childOfChild in FindLogicalChildren<TChild>(child))
                         {
                             yield return childOfChild;
                         }

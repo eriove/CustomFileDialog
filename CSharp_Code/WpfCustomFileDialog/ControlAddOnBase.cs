@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-// Copyright © Decebal Mihailescu 2015
+﻿// Copyright © Decebal Mihailescu 2015
 
 // All rights reserved.
 // This code is released under The Code Project Open License (CPOL) 1.02
@@ -12,15 +8,7 @@ using System.Text;
 // IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR
 // PURPOSE. IT CAN BE DISTRIBUTED FREE OF CHARGE AS LONG AS THIS HEADER 
 // REMAINS UNCHANGED.
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace WpfCustomFileDialog
 {

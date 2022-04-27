@@ -11,19 +11,15 @@
 // REMAINS UNCHANGED.
 namespace WpfCustomFileDialog
 {
-    using MS.Win32;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.IO;
-    using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
     using System.Security;
     using System.Security.Permissions;
     using System.Text;
     using System.Windows;
-    using System.Reflection;
-    using System.Windows.Interop; 
     using System.Windows.Controls;
     public abstract partial class FileDialogExt<T> : Microsoft.Win32.CommonDialog, IFileDlgExt where T : ContentControl, IWindowExt, new()
     {
