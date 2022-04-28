@@ -7,7 +7,7 @@
 // THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY
 // KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
 // IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR
-// PURPOSE. IT CAN BE DISTRIBUTED FREE OF CHARGE AS LONG AS THIS HEADER 
+// PURPOSE. IT CAN BE DISTRIBUTED FREE OF CHARGE AS LONG AS THIS HEADER
 // REMAINS UNCHANGED.
 
 using System.Windows.Controls;
@@ -376,8 +376,8 @@ namespace WpfCustomFileDialog
         protected object InvokeMethod(object instance, string methodName, params object[] args)
         {
             Type type = (instance is Type) ? instance as Type : instance.GetType();
-            MethodInfo mi = type.GetMethod(methodName, (instance is Type) ? BindingFlags.NonPublic | BindingFlags.Static : BindingFlags.NonPublic | BindingFlags.Instance);//invoking the method                 
-            //null- no parameter for the function [or] we can pass the array of parameters            
+            MethodInfo mi = type.GetMethod(methodName, (instance is Type) ? BindingFlags.NonPublic | BindingFlags.Static : BindingFlags.NonPublic | BindingFlags.Instance);//invoking the method
+            //null- no parameter for the function [or] we can pass the array of parameters
             return (args == null || args.Length == 0) ? mi.Invoke(instance, null) : mi.Invoke(instance, args);
         }
         protected object GetProperty(object target, string fieldName)
@@ -624,6 +624,26 @@ namespace WpfCustomFileDialog
                     break;
 
                 case NativeMethods.Msg.WM_WINDOWPOSCHANGING:
+                    // Based on a suggestion from Tayyaba Naz in the disucussion on the code project page:
+                    // https://www.codeproject.com/Articles/42008/Extend-OpenFileDialog-and-SaveFileDialog-Using-WPF
+                    RECT dialogWndRect = new RECT();
+                    NativeMethods.GetWindowRect(new HandleRef(this, this._hwndFileDialog), ref dialogWndRect);
+                    RECT dialogClientRect = new RECT();
+                    NativeMethods.GetClientRect(new HandleRef(this, this._hwndFileDialog), ref dialogClientRect);
+                    uint dx = dialogWndRect.Width - dialogClientRect.Width;
+                    uint dy = dialogWndRect.Height - dialogClientRect.Height;
+
+                    switch (FileDlgStartLocation)
+                    {
+                        case AddonWindowLocation.Bottom:
+                            _childWnd.Width = dialogWndRect.Width - dx;
+                            break;
+                        case AddonWindowLocation.Right:
+                            _childWnd.Height = dialogWndRect.Height - dy;
+                            break;
+                        case AddonWindowLocation.BottomRight:
+                            break;
+                    }
 
                     break;
 
@@ -682,6 +702,32 @@ namespace WpfCustomFileDialog
                     break;
 
                 case NativeMethods.Msg.WM_WINDOWPOSCHANGING:
+                    // Based on a suggestion from Tayyaba Naz in the disucussion on the code project page:
+                    // https://www.codeproject.com/Articles/42008/Extend-OpenFileDialog-and-SaveFileDialog-Using-WPF
+                    RECT dialogWndRect = new RECT();
+                    NativeMethods.GetWindowRect(new HandleRef(this, this._hwndFileDialog), ref dialogWndRect);
+                    RECT dialogClientRect = new RECT();
+                    NativeMethods.GetClientRect(new HandleRef(this, this._hwndFileDialog), ref dialogClientRect);
+                    uint dx = dialogWndRect.Width - dialogClientRect.Width;
+                    uint dy = dialogWndRect.Height - dialogClientRect.Height;
+
+                    switch (FileDlgStartLocation)
+                    {
+                        case AddonWindowLocation.Bottom:
+                            _childWnd.Width = dialogWndRect.Width - dx;
+                            break;
+                        case AddonWindowLocation.Right:
+                            _childWnd.Height = dialogWndRect.Height - dy;
+                            break;
+                        case AddonWindowLocation.BottomRight:
+                            break;
+                    }
+
+                    const NativeMethods.SetWindowPosFlags flags = NativeMethods.SetWindowPosFlags.SWP_NOZORDER | NativeMethods.SetWindowPosFlags.SWP_NOMOVE;//| SetWindowPosFlags.SWP_NOREPOSITION | SetWindowPosFlags.SWP_ASYNCWINDOWPOS | SetWindowPosFlags.SWP_SHOWWINDOW | SetWindowPosFlags.SWP_DRAWFRAME;
+                    ContentControl ctrl = _childWnd as ContentControl;
+
+                    NativeMethods.SetWindowPos(new HandleRef(ctrl, _source.Handle), new HandleRef(_source, (IntPtr)ZOrderPos.HWND_BOTTOM),
+                                                 0, 0, (int)(ctrl.Width), (int)(ctrl.Height), flags);
 
                     break;
 
@@ -727,19 +773,19 @@ namespace WpfCustomFileDialog
                 wnd.WindowStartupLocation = WindowStartupLocation.Manual;
                 wnd.Left = -10000;
                 wnd.Top = -10000;
-                wnd.SourceInitialized += delegate(object sender, EventArgs e)
-              {
-                  try
-                  {
-                      _source = System.Windows.PresentationSource.FromVisual(_childWnd as Window) as HwndSource;
-                      _source.AddHook(EmbededWndProc);
-                      _childWnd.Source = _source;
-                  }
-                  catch
-                  {
-                  }
+                wnd.SourceInitialized += delegate (object sender, EventArgs e)
+                {
+                    try
+                    {
+                        _source = System.Windows.PresentationSource.FromVisual(_childWnd as Window) as HwndSource;
+                        _source.AddHook(EmbededWndProc);
+                        _childWnd.Source = _source;
+                    }
+                    catch
+                    {
+                    }
 
-              };
+                };
 
                 wnd.Show();
 
@@ -760,7 +806,7 @@ namespace WpfCustomFileDialog
                 NativeMethods.SetParent(new HandleRef(_childWnd, _source.Handle), new HandleRef(this, _hwndFileDialog));
             }
             else
-            {// To do: what if the child is not a Window 
+            {// To do: what if the child is not a Window
                 //see http://social.msdn.microsoft.com/Forums/en-US/wpf/thread/b2cff333-cbd9-4742-beba-ba19a15eeaee
                 ContentControl ctrl = _childWnd as ContentControl;
                 HwndSourceParameters parameters = new HwndSourceParameters("WPFDlgControl", (int)ctrl.Width, (int)ctrl.Height);
@@ -771,7 +817,7 @@ namespace WpfCustomFileDialog
                 switch (this.FileDlgStartLocation)
                 {
                     case AddonWindowLocation.Right:
-                        parameters.PositionX = (int)_OriginalRect.Width - dx/2;
+                        parameters.PositionX = (int)_OriginalRect.Width - dx;
                         parameters.PositionY = 0;
                         if (ctrl.Height < _OriginalRect.Height - dy)
                             ctrl.Height = parameters.Height = (int)_OriginalRect.Height - dy;
@@ -779,18 +825,19 @@ namespace WpfCustomFileDialog
 
                     case AddonWindowLocation.Bottom:
                         parameters.PositionX = 0;
-                        parameters.PositionY = (int)(_OriginalRect.Height - dy + dx/2);
+                        parameters.PositionY = (int)(_OriginalRect.Height - dy);
                         if (ctrl.Width < _OriginalRect.Width - dx)
                             ctrl.Width = parameters.Width = (int)_OriginalRect.Width - dx;
                         break;
                     case AddonWindowLocation.BottomRight:
-                        parameters.PositionX = (int)_OriginalRect.Width - dx/2 ;
-                        parameters.PositionY = (int)(_OriginalRect.Height - dy + dx/2);
+                        parameters.PositionX = (int)_OriginalRect.Width - dx;
+                        parameters.PositionY = (int)(_OriginalRect.Height - dy);
                         break;
                 }
 
                 _source = new HwndSource(parameters);
                 _source.CompositionTarget.BackgroundColor = System.Windows.Media.Colors.LightGray;
+                _source.SizeToContent = SizeToContent.WidthAndHeight;
                 _source.RootVisual = _childWnd as System.Windows.Media.Visual;
                 _source.AddHook(new HwndSourceHook(EmbededCtrlProc));
             }
@@ -856,8 +903,8 @@ namespace WpfCustomFileDialog
                             NativeMethods.MoveWindow(new HandleRef(this, _hwndFileDialog), (int)(dialogWndRect.left), top, (int)(_OriginalRect.Width + wnd.ActualWidth), (int)(_OriginalRect.Height - dx / 2), true);
                             wnd.Height = _OriginalRect.Height - dy;
                         }
-                            wnd.Top = 0;
-                            wnd.Left = _OriginalRect.Width - dx / 2;
+                        wnd.Top = 0;
+                        wnd.Left = _OriginalRect.Width - dx / 2;
                         break;
                     case AddonWindowLocation.BottomRight:
                         NativeMethods.MoveWindow(new HandleRef(this, _hwndFileDialog), dialogWndRect.left, dialogWndRect.top, (int)(_OriginalRect.Width + wnd.Width), (int)(int)(_OriginalRect.Height + wnd.Height), true);
@@ -875,7 +922,7 @@ namespace WpfCustomFileDialog
                 switch (FileDlgStartLocation)
                 {
                     case AddonWindowLocation.Bottom:
-                        NativeMethods.SetWindowPos(new HandleRef(this, this._hwndFileDialog), new HandleRef(this,(IntPtr)ZOrderPos.HWND_BOTTOM),
+                        NativeMethods.SetWindowPos(new HandleRef(this, this._hwndFileDialog), new HandleRef(this, (IntPtr)ZOrderPos.HWND_BOTTOM),
                             dialogWndRect.left, dialogWndRect.top, (int)(ctrl.ActualWidth + dx / 2), (int)(_OriginalRect.Height + ctrl.ActualHeight), flags);
                         //NativeMethods.MoveWindow(new HandleRef(this, this._hwndFileDialog), dialogWndRect.left, dialogWndRect.top, (int)(ctrl.ActualWidth + dx / 2), (int)(_OriginalRect.Height + ctrl.ActualHeight), true);
                         NativeMethods.SetWindowPos(new HandleRef(ctrl, _source.Handle), new HandleRef(_source, (IntPtr)ZOrderPos.HWND_BOTTOM),
