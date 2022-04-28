@@ -2,16 +2,12 @@
   <PropertyGroup>
     <TargetFrameworks>net40;net5.0-windows</TargetFrameworks>
     <UseWPF>true</UseWPF>
-    <!-- <Nullable>enable</Nullable> -->
     <LangVersion>Latest</LangVersion>
-    <!-- <WarningsAsErrors>CA1051</WarningsAsErrors> -->
-    <!-- <NoWarn>1701;1702;CA1303;CA2225;CA1814</NoWarn> -->
-    <!-- <WarningsAsErrors>CA1051;nullable</WarningsAsErrors> -->
-    <!-- <AnalysisMode>AllEnabledByDefault</AnalysisMode> -->
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <RootNamespace>WpfCustomFileDialog</RootNamespace>
     <AssemblyName>WpfCustomFileDialog</AssemblyName>
     <DebugType>embedded</DebugType>
+    <PackageVersion>1.2.1</PackageVersion>
     <GeneratePackageOnBuild Condition="'$(Configuration)'=='Release'">true</GeneratePackageOnBuild>
   </PropertyGroup>
 
